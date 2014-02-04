@@ -128,7 +128,7 @@ function validateStudentForm(thisform){
 	}
 }
 
-function validatePaymentForm(thisform, dt){  
+function validatePaymentForm(id, thisform, dt){  
 	with (thisform){  
 		document.getElementById("msg").style.padding="1em 0 1em 2em";
 
@@ -143,21 +143,18 @@ function validatePaymentForm(thisform, dt){
 			payAmount.focus();
 			return false;
 		}
-
-		savePayment(payAmount.value, dt);
 	}
+	savePayment(id, payAmount.value, dt);
 }
 
-function savePayment(amount, dt){
-
+function savePayment(id, amount, dt){
 	$.ajax({
 	type: "POST",
 	url: "../sm/ajax/savePayment.php",
-	data: {lAmnt: amount, ldt: dt}	//send to savePayment.php
+	data: {lId: id, lAmnt: amount, ldt: dt}	//send to savePayment.php
 	}).done(function( result ) {
 	$("#msg").html( result );
 	});
-alert(amount + ' ' + dt);
 }
 
 function validate(field){

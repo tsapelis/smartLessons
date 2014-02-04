@@ -1,14 +1,15 @@
 <?php
 	require("../inc/config.php");
 
+	$id = $_POST['lId'];
 	$amount = $_POST['lAmnt'];
 	$lDtemp = $_POST['ldt'];  //get lesson date with wrong format for saving to database
 	$lDt = implode("-", array_reverse(explode("/", $lDtemp))); // convert date to suitable format for the database
 
-	echo $amount . " " . $lDtemp . " " . $lDt;
+	echo $id . " " . $amount . " " . $lDtemp . " " . $lDt;
 	
-/*
-	if( ( !$gId ) || ( !$lDt ) || ( !$lHr ) || ( count($studIds)<=0 ) || ( count($studVals)<=0 )){
+
+	if( ( !$amount ) || ( !$lDtemp ) || ( !$lDt ) ){
 		echo "Ελλειπή Στοιχεία !";
 		exit;
 	}
@@ -16,10 +17,11 @@
 	$mysqli->set_charset("utf8");
 
 	if (mysqli_connect_errno()) {
-	  printf("Connect failed: %s\n", mysqli_connect_error());
+	  printf("Connection failed: %s\n", mysqli_connect_error());
 	  exit();
 	}
-
+echo "<br>Connection Ok!";
+/*
 	$ok = true;
 	$mysqli->autocommit(FALSE);	// start transaction
 	for($i=0; $i<count($studIds); $i++){

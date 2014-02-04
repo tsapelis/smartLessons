@@ -50,7 +50,7 @@
 								</table>
 							</div>
 							<div style="padding:1em 0 1em 0;">
-								<a href="javascript:void(0)" onClick="validatePaymentForm( document.getElementById('frmStudentPayment'), document.getElementById('payDate').value );" id="saveBtn">
+								<a href="javascript:void(0)" onClick="validatePaymentForm(<?php echo "{$std[0]}, "; ?>document.getElementById('frmStudentPayment'), document.getElementById('payDate').value );" id="saveBtn">
 									Αποθήκευση
 								</a>
 								<a href="students.php" id="cancelBtn">
