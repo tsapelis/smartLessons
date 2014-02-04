@@ -7,7 +7,6 @@ function checkLesson(grpId, grpTtl, lDate, lHours, studsTbl){
 	var sId = new Array();
 	var sVal = new Array();
 
-//alert("checkLesson Title" + grpTtl);
 	for (var i=1; i<rows.length; i++){
 		var cells = rows[i].getElementsByTagName("td");
 		sId.push( rows[i].id );
@@ -105,22 +104,22 @@ function validateStudentForm(thisform){
 	with (thisform){  
 		document.getElementById("err").style.padding="1em 0 1em 2em";
 		if (validate(studentSurname)==false){ 
-			document.getElementById('err').innerHTML =  "Το επώνυμο  απαιτείται !";
+			document.getElementById('err').innerHTML =  "Το επώνυμο  απαιτείται!";
 			studentSurname.focus();
 			return false;
 		}
 		if (validate(studentName)==false){ 
-			document.getElementById('err').innerHTML =  "Το όνομα απαιτείται !";
+			document.getElementById('err').innerHTML =  "Το όνομα απαιτείται!";
 			studentName.focus();
 			return false;
 		}
 		if (validate(studentPrice)==false){ 
-			document.getElementById('err').innerHTML =  "Η τιμή απαιτείται !";
+			document.getElementById('err').innerHTML =  "Η τιμή απαιτείται!";
 			studentPrice.focus();
 			return false;
 		}
 		if (isNaN(Number(studentPrice.value))==true){ 
-			document.getElementById('err').innerHTML =  "Η τιμή είναι αριθμητική τιμή !";
+			document.getElementById('err').innerHTML =  "Η τιμή είναι αριθμητική τιμή!";
 			studentPrice.focus();
 			return false;
 		}
@@ -129,25 +128,36 @@ function validateStudentForm(thisform){
 	}
 }
 
-function validatePaymentForm(thisform){  
-//alert('lsddsfldsfjldsfjl');
+function validatePaymentForm(thisform, dt){  
 	with (thisform){  
 		document.getElementById("err").style.padding="1em 0 1em 2em";
 
 		if (isNaN(Number(payAmount.value))==true){ 
-			document.getElementById('err').innerHTML =  "Το ποσό πληρωμής είναι αριθμητική τιμή !";
+			document.getElementById('err').innerHTML =  "Το ποσό πληρωμής είναι αριθμητική τιμή!";
 			payAmount.focus();
 			return false;
 		}
 
 		if (validate(payAmount)==false){ 
-			document.getElementById('err').innerHTML =  "Το ποσό πληρωμής απαιτείται !";
+			document.getElementById('msg').innerHTML =  "Το ποσό πληρωμής απαιτείται!";
 			payAmount.focus();
 			return false;
 		}
 
-		submit();
+		savePayment(payAmount.value, dt);
 	}
+}
+
+function savePayment(amount, dt){
+
+	$.ajax({
+	type: "POST",
+	url: "../sm/ajax/savePayment.php",
+	data: {lAmnt: amount, ldt: dt}	//send to savePayment.php
+	}).done(function( result ) {
+	$("#msg").html( result );
+	});
+alert(amount + ' ' + dt);
 }
 
 function validate(field){

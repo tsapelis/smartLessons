@@ -23,7 +23,7 @@
 							<div style="float:right;">
 							</div>
 				</div>
-				<div id="msg" style="float:clear; color:#ff0000; font-size:14px;"></div>			
+				<div id="err" style="float:clear; color:#ff0000; font-size:14px;"></div>			
 				<div id="page">
 					<div style="text-align:center;margin:auto; width:100%">
 						<p>
