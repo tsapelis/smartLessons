@@ -1,0 +1,56 @@
+<?php
+	require("../inc/config.php");
+
+	$gId = $_POST['lgId'];  //get lesson groupId
+	$gTtl = $_POST['lgTtl'];  //get lesson Title
+	$lDtemp = $_POST['llDt'];  //get lesson date with wrong format for saving to database
+	$lHr = $_POST['llHr'];  //get lesson hours
+	$studIds = $_POST['lstdTbl'];	 //get array with students Ids
+	$studVals = $_POST['lstdVls'];	 //get array with students Values
+	$lDt = implode("-", array_reverse(explode("/", $lDtemp))); // convert date to suitable format for the database
+	
+	if( ( !$gId ) || ( !$lDt ) || ( !$lHr ) || ( count($studIds)<=0 ) || ( count($studVals)<=0 )){
+		echo "Ελλειπή Στοιχεία !";
+		exit;
+	}
+	$mysqli = new mysqli(DB_SERVER, DB_USER, DB_PASS, DB_NAME);
+	$mysqli->set_charset("utf8");
+
+	if (mysqli_connect_errno()) {
+	  printf("Connect failed: %s\n", mysqli_connect_error());
+	  exit();
+	}
+
+	$ok = true;
+	$mysqli->autocommit(FALSE);	// start transaction
+	for($i=0; $i<count($studIds); $i++){
+		$cst = $lHr * $studVals[$i];		// calculate lesson's cost for every student
+																		// insert lesson's record for every student
+		$qr = "INSERT INTO lessons(groupId, studentId, hours, date, price, cost) ";
+		$qr .= "VALUES ({$gId}, {$studIds[$i]}, {$lHr}, '{$lDt}', {$studVals[$i]}, {$cst})";
+		$r = $mysqli->query($qr);
+		if ( !$r ){
+			$ok = true;
+			echo $mysqli->error;
+		}
+																		// update student's cost
+		$qr = "UPDATE students SET rest=rest+{$cst} where id={$studIds[$i]}";
+		$r = $mysqli->query($qr);
+		if ( !$r ){
+			$ok = true;
+			echo $mysqli->error;
+		}		
+	}
+	
+	if ( $ok == true ){
+		$mysqli->commit();
+//		echo "Τα στοιχεία καταχωρήθηκαν.";
+		echo "Καταχωρήθηκέ " . $lHr .  ($lHr < 2 ? " ώρα" : " ώρες") . " για το μάθημα \"" . $gTtl . "\" στις " . $lDtemp;	
+	}	
+	else{
+		echo "Πρόβλημα κατα την καταχώρηση!";
+		$mysqli->rollback();
+	}	
+	$mysqli->close();
+?>
+
