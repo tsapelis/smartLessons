@@ -1,11 +1,12 @@
 <?php
 	require("../inc/config.php");
 
+	$id = $_POST['lId'];
 	$amount = $_POST['lAmnt'];
 	$lDtemp = $_POST['ldt'];  //get lesson date with wrong format for saving to database
 	$lDt = implode("-", array_reverse(explode("/", $lDtemp))); // convert date to suitable format for the database
 
-	echo $amount . " " . $lDtemp . " " . $lDt;
+	//echo $id . " " . $amount . " " . $lDtemp . " " . $lDt;
 	
 
 	if( ( !$amount ) || ( !$lDtemp ) || ( !$lDt ) ){
@@ -19,21 +20,37 @@
 	  printf("Connection failed: %s\n", mysqli_connect_error());
 	  exit();
 	}
-echo "<br>Connection Ok!";
-/*
-	$ok = true;
-	$mysqli->autocommit(FALSE);	// start transaction
-	for($i=0; $i<count($studIds); $i++){
-		$cst = $lHr * $studVals[$i];		// calculate lesson's cost for every student
-																		// insert lesson's record for every student
-		$qr = "INSERT INTO lessons(groupId, studentId, hours, date, price, cost) ";
-		$qr .= "VALUES ({$gId}, {$studIds[$i]}, {$lHr}, '{$lDt}', {$studVals[$i]}, {$cst})";
-		$r = $mysqli->query($qr);
-		if ( !$r ){
+
+// insert payment
+	$q1 = "INSERT INTO payments(studentId, amount, date) ";
+	$q1 .= "VALUES({$id}, {$amount}, '{$lDt}')";
+	$r = $mysqli->query($q1);
+//echo $q1 . "<br>";
+
+// update student rest
+	$q1 = "UPDATE students ";
+	$q1 .= "SET rest = rest - {$amount} ";
+	$q1 .= "WHERE id = {$id}";
+
+	$r = $mysqli->query($q1);
+echo $q1 . "<br>";
+
+	$qr = "SELECT * FROM lessons ";
+	$qr .= "WHERE studentId={$id} AND cost<>0 ";
+	$qr .= "ORDER BY date ASC ";
+//echo "<br>Connection Ok!";
+
+	$r = $mysqli->query($qr);
+
+	while($build = mysqli_fetch_array($r)){
+		echo $build[id] . " " . $build[date] . " " . $build[hours] . " " . $build[cost] . "<br>"; 
+	}
+
+		/*if ( !$r ){
 			$ok = true;
 			echo $mysqli->error;
 		}
-																		// update student's cost
+																	// update student's cost
 		$qr = "UPDATE students SET rest=rest+{$cst} where id={$studIds[$i]}";
 		$r = $mysqli->query($qr);
 		if ( !$r ){
@@ -51,7 +68,8 @@ echo "<br>Connection Ok!";
 		echo "Πρόβλημα κατα την καταχώρηση!";
 		$mysqli->rollback();
 	}	
-	$mysqli->close();
 */
+	$mysqli->close();
+
 ?>
 
